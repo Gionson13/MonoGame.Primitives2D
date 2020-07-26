@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -346,6 +348,23 @@ namespace MonoGame
         /// Draws a rectangle with the thickness provided
         /// </summary>
         /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="location">Where to draw</param>
+        /// <param name="size">The size of the rectangle</param>
+        /// <param name="color">The color to draw the rectangle in</param>
+        /// <param name="scale">The scaling factor of the rectangle</param>
+        /// <param name="thickness">The thickness of the line</param>
+        /// <param name="angle">The angle of the rotation</param>
+        /// <param name="origin">The origin of the rotation</param>
+        public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float scale, float thickness, float angle, Vector2 origin)
+        {
+            size *= scale;
+            DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, thickness, angle, origin);
+        }
+
+        /// <summary>
+        /// Draws a rectangle with the thickness provided
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
         /// <param name="rect">The rectangle to draw</param>
         /// <param name="color">The color to draw the rectangle in</param>
         /// <param name="angle">The angle of the rotation</param>
@@ -404,6 +423,27 @@ namespace MonoGame
         /// <param name="fill">If true the rectangle will be filled</param>
         public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float angle, Vector2 origin, bool fill)
         {
+            if (fill)
+                FillRectangle(spriteBatch, location, size, color, angle, origin);
+            else
+                DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, 1f, angle, origin);
+        }
+
+
+        /// <summary>
+        /// Draws a rectangle with the thickness provided
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="location">Where to draw</param>
+        /// <param name="size">The size of the rectangle</param>
+        /// <param name="color">The color to draw the rectangle in</param>
+        /// <param name="scale">The scaling factor of the rectangle</param>
+        /// <param name="angle">The angle of the rotation</param>
+        /// <param name="origin">The origin of the rotation</param>
+        /// <param name="fill">If true the rectangle will be filled</param>
+        public static void DrawRectangle(this SpriteBatch spriteBatch, Vector2 location, Vector2 size, Color color, float scale, float angle, Vector2 origin, bool fill)
+        {
+            size *= scale;
             if (fill)
                 FillRectangle(spriteBatch, location, size, color, angle, origin);
             else
