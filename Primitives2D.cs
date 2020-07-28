@@ -595,11 +595,57 @@ namespace MonoGame
         /// <param name="radius">The radius of the circle</param>
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
-        public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color)
+        /// <param name="fill">If true the rectangle will be filled</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, bool fill)
         {
-            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, 1.0f);
+            if (fill)
+            {
+                for (int x = (int)(center.X - radius); x < (int)(center.X + radius); x++)
+                {
+                    for (int y = (int)(center.Y - radius); y < (int)(center.Y + radius); y++)
+                    {
+                        var distance = Math.Sqrt(Math.Pow(x - center.X, 2)
+                        + Math.Pow(y - center.Y, 2));
+
+                        if (distance <= radius)
+                            PutPixel(spriteBatch, x, y, color);
+                    }
+                }
+            }
+            else
+                DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, 1.0f);
         }
 
+        /// <summary>
+        /// Draw a circle
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="scale">The scale factor of the circle</param>
+        /// <param name="fill">If true the rectangle will be filled</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, float scale, bool fill)
+        {
+            radius *= scale;
+            if (fill)
+            {
+                for (int x = (int)(center.X - radius); x < (int)(center.X + radius); x++)
+                {
+                    for (int y = (int)(center.Y - radius); y < (int)(center.Y + radius); y++)
+                    {
+                        var distance = Math.Sqrt(Math.Pow(x - center.X, 2)
+                        + Math.Pow(y - center.Y, 2));
+
+                        if (distance <= radius)
+                            PutPixel(spriteBatch, x, y, color);
+                    }
+                }
+            }
+            else
+                DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, 1.0f);
+        }
 
         /// <summary>
         /// Draw a circle
@@ -615,6 +661,23 @@ namespace MonoGame
             DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, thickness);
         }
 
+        /// <summary>
+        /// Draw a circle
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="thickness">The thickness of the lines used</param>
+        /// <param name="scale">The scale factor of the circle</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, float thickness, float scale)
+        {
+            radius *= scale;
+            DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, thickness);
+        }
+
+
 
         /// <summary>
         /// Draw a circle
@@ -625,9 +688,58 @@ namespace MonoGame
         /// <param name="radius">The radius of the circle</param>
         /// <param name="sides">The number of sides to generate</param>
         /// <param name="color">The color of the circle</param>
-        public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color)
+        /// <param name="fill">If true the rectangle will be filled</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, bool fill)
         {
-            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1.0f);
+            if (fill)
+            {
+                for (int pixelX = (int)(x - radius); pixelX < (int)(x + radius); pixelX++)
+                {
+                    for (int pixelY = (int)(y - radius); pixelY < (int)(y + radius); pixelY++)
+                    {
+                        var distance = Math.Sqrt(Math.Pow(pixelX - x, 2)
+                        + Math.Pow(pixelY - y, 2));
+
+                        if (distance <= radius)
+                            PutPixel(spriteBatch, pixelX, pixelY, color);
+                    }
+                }
+            }
+            else
+                DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1.0f);
+        }
+
+        /// <summary>
+        /// Draw a circle
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="x">The center X of the circle</param>
+        /// <param name="y">The center Y of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="scale">The scale factor of the circle</param>       
+        /// <param name="fill">If true the rectangle will be filled</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float scale, bool fill)
+        {
+            radius *= scale;
+
+            if (fill)
+            {
+                for (int pixelX = (int)(x - radius); pixelX < (int)(x + radius); pixelX++)
+                {
+                    for (int pixelY = (int)(y - radius); pixelY < (int)(y + radius); pixelY++)
+                    {
+                        var distance = Math.Sqrt(Math.Pow(pixelX - x, 2)
+                        + Math.Pow(pixelY - y, 2));
+
+                        if (distance <= radius)
+                            PutPixel(spriteBatch, pixelX, pixelY, color);
+                    }
+                }
+            }
+            else
+                DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1f);
         }
 
 
@@ -643,6 +755,23 @@ namespace MonoGame
         /// <param name="thickness">The thickness of the lines used</param>
         public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float thickness)
         {
+            DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, thickness);
+        }
+
+        /// <summary>
+        /// Draw a circle
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="x">The center X of the circle</param>
+        /// <param name="y">The center Y of the circle</param>
+        /// <param name="radius">The radius of the circle</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="color">The color of the circle</param>
+        /// <param name="thickness">The thickness of the lines used</param>
+        /// <param name="scale">The scale factor of the circle</param>
+        public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float thickness, float scale)
+        {
+            radius *= scale;
             DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, thickness);
         }
 
@@ -680,6 +809,25 @@ namespace MonoGame
         /// <param name="thickness">The thickness of the arc</param>
         public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, Color color, float thickness)
         {
+            List<Vector2> arc = CreateArc(radius, sides, startingAngle, radians);
+            //List<Vector2> arc = CreateArc2(radius, sides, startingAngle, degrees);
+            DrawPoints(spriteBatch, center, arc, color, thickness);
+        }
+
+        /// <summary>
+        /// Draw a arc
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the arc</param>
+        /// <param name="radius">The radius of the arc</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="startingAngle">The starting angle of arc, 0 being to the east, increasing as you go clockwise</param>
+        /// <param name="radians">The number of radians to draw, clockwise from the starting angle</param>
+        /// <param name="color">The color of the arc</param>
+        /// <param name="thickness">The thickness of the arc</param>
+        public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, Color color, float thickness, float scale)
+        {
+            radius *= scale;
             List<Vector2> arc = CreateArc(radius, sides, startingAngle, radians);
             //List<Vector2> arc = CreateArc2(radius, sides, startingAngle, degrees);
             DrawPoints(spriteBatch, center, arc, color, thickness);
