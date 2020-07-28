@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -12,8 +10,8 @@ namespace MonoGame
 
         #region Private Members
 
-        private static readonly Dictionary<String, List<Vector2>> circleCache = new Dictionary<string, List<Vector2>>();
-        //private static readonly Dictionary<String, List<Vector2>> arcCache = new Dictionary<string, List<Vector2>>();
+        private static readonly Dictionary<string, List<Vector2>> circleCache = new Dictionary<string, List<Vector2>>();
+        //private static readonly Dictionary<string, List<Vector2>> arcCache = new Dictionary<string, List<Vector2>>();
         private static Texture2D pixel;
 
         #endregion
@@ -57,11 +55,9 @@ namespace MonoGame
         private static List<Vector2> CreateCircle(double radius, int sides)
         {
             // Look for a cached version of this circle
-            String circleKey = radius + "x" + sides;
+            string circleKey = radius + "x" + sides;
             if (circleCache.ContainsKey(circleKey))
-            {
                 return circleCache[circleKey];
-            }
 
             List<Vector2> vectors = new List<Vector2>();
 
@@ -218,7 +214,6 @@ namespace MonoGame
                 DrawRectangle(spriteBatch, rect, color, 1.0f, 0f, Vector2.Zero);
         }
 
-
         /// <summary>
         /// Draws a rectangle with the thickness provided
         /// </summary>
@@ -300,7 +295,6 @@ namespace MonoGame
             else
                 DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, 1.0f, 0f, Vector2.Zero);
         }
-
 
         /// <summary>
         /// Draws a rectangle with the thickness provided
@@ -428,7 +422,6 @@ namespace MonoGame
             else
                 DrawRectangle(spriteBatch, new Rectangle((int)location.X, (int)location.Y, (int)size.X, (int)size.Y), color, 1f, angle, origin);
         }
-
 
         /// <summary>
         /// Draws a rectangle with the thickness provided
@@ -598,22 +591,7 @@ namespace MonoGame
         /// <param name="fill">If true the rectangle will be filled</param>
         public static void DrawCircle(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, Color color, bool fill)
         {
-            if (fill)
-            {
-                for (int x = (int)(center.X - radius); x < (int)(center.X + radius); x++)
-                {
-                    for (int y = (int)(center.Y - radius); y < (int)(center.Y + radius); y++)
-                    {
-                        var distance = Math.Sqrt(Math.Pow(x - center.X, 2)
-                        + Math.Pow(y - center.Y, 2));
-
-                        if (distance <= radius)
-                            PutPixel(spriteBatch, x, y, color);
-                    }
-                }
-            }
-            else
-                DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, 1.0f);
+            DrawCircle(spriteBatch, center, radius, sides, color, 1.0f, fill);
         }
 
         /// <summary>
@@ -677,8 +655,6 @@ namespace MonoGame
             DrawPoints(spriteBatch, center, CreateCircle(radius, sides), color, thickness);
         }
 
-
-
         /// <summary>
         /// Draw a circle
         /// </summary>
@@ -691,22 +667,7 @@ namespace MonoGame
         /// <param name="fill">If true the rectangle will be filled</param>
         public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, bool fill)
         {
-            if (fill)
-            {
-                for (int pixelX = (int)(x - radius); pixelX < (int)(x + radius); pixelX++)
-                {
-                    for (int pixelY = (int)(y - radius); pixelY < (int)(y + radius); pixelY++)
-                    {
-                        var distance = Math.Sqrt(Math.Pow(pixelX - x, 2)
-                        + Math.Pow(pixelY - y, 2));
-
-                        if (distance <= radius)
-                            PutPixel(spriteBatch, pixelX, pixelY, color);
-                    }
-                }
-            }
-            else
-                DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1.0f);
+            DrawCircle(spriteBatch, new Vector2(x, y), radius, sides, color, 1f, fill);
         }
 
         /// <summary>
@@ -722,26 +683,8 @@ namespace MonoGame
         /// <param name="fill">If true the rectangle will be filled</param>
         public static void DrawCircle(this SpriteBatch spriteBatch, float x, float y, float radius, int sides, Color color, float scale, bool fill)
         {
-            radius *= scale;
-
-            if (fill)
-            {
-                for (int pixelX = (int)(x - radius); pixelX < (int)(x + radius); pixelX++)
-                {
-                    for (int pixelY = (int)(y - radius); pixelY < (int)(y + radius); pixelY++)
-                    {
-                        var distance = Math.Sqrt(Math.Pow(pixelX - x, 2)
-                        + Math.Pow(pixelY - y, 2));
-
-                        if (distance <= radius)
-                            PutPixel(spriteBatch, pixelX, pixelY, color);
-                    }
-                }
-            }
-            else
-                DrawPoints(spriteBatch, new Vector2(x, y), CreateCircle(radius, sides), color, 1f);
+            DrawCircle(spriteBatch, new Vector2(x, y), radius, sides, color, scale, fill);
         }
-
 
         /// <summary>
         /// Draw a circle
@@ -795,6 +738,22 @@ namespace MonoGame
             DrawArc(spriteBatch, center, radius, sides, startingAngle, radians, color, 1.0f);
         }
 
+        /// <summary>
+        /// Draw a arc
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the arc</param>
+        /// <param name="radius">The radius of the arc</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="startingAngle">The starting angle of arc, 0 being to the east, increasing as you go clockwise</param>
+        /// <param name="radians">The number of radians to draw, clockwise from the starting angle</param>
+        /// <param name="rotation">The rotation of the arc</param>
+        /// <param name="color">The color of the arc</param>
+        public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, float rotation, Color color)
+        {
+            DrawArc(spriteBatch, center, radius, sides, startingAngle, radians, rotation, color, 1.0f, 1.0f);
+        }
+
 
         /// <summary>
         /// Draw a arc
@@ -809,9 +768,7 @@ namespace MonoGame
         /// <param name="thickness">The thickness of the arc</param>
         public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, Color color, float thickness)
         {
-            List<Vector2> arc = CreateArc(radius, sides, startingAngle, radians);
-            //List<Vector2> arc = CreateArc2(radius, sides, startingAngle, degrees);
-            DrawPoints(spriteBatch, center, arc, color, thickness);
+            DrawArc(spriteBatch, center, radius, sides, startingAngle, radians, 0.0f, color, 1.0f, 1.0f);
         }
 
         /// <summary>
@@ -825,9 +782,30 @@ namespace MonoGame
         /// <param name="radians">The number of radians to draw, clockwise from the starting angle</param>
         /// <param name="color">The color of the arc</param>
         /// <param name="thickness">The thickness of the arc</param>
+        /// <param name="scale">The scale factor of the arc</param>
         public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, Color color, float thickness, float scale)
         {
+            DrawArc(spriteBatch, center, radius, sides, startingAngle, radians, 0.0f, color, thickness, scale);
+        }
+
+        /// <summary>
+        /// Draw a arc
+        /// </summary>
+        /// <param name="spriteBatch">The destination drawing surface</param>
+        /// <param name="center">The center of the arc</param>
+        /// <param name="radius">The radius of the arc</param>
+        /// <param name="sides">The number of sides to generate</param>
+        /// <param name="startingAngle">The starting angle of arc, 0 being to the east, increasing as you go clockwise</param>
+        /// <param name="radians">The number of radians to draw, clockwise from the starting angle</param>
+        /// <param name="rotation">The rotation in radians of the arc</param>
+        /// <param name="color">The color of the arc</param>
+        /// <param name="thickness">The thickness of the arc</param>
+        /// <param name="scale">The scale factor of the arc</param>
+        public static void DrawArc(this SpriteBatch spriteBatch, Vector2 center, float radius, int sides, float startingAngle, float radians, float rotation, Color color, float thickness, float scale)
+        {
             radius *= scale;
+            startingAngle += rotation;
+
             List<Vector2> arc = CreateArc(radius, sides, startingAngle, radians);
             //List<Vector2> arc = CreateArc2(radius, sides, startingAngle, degrees);
             DrawPoints(spriteBatch, center, arc, color, thickness);
